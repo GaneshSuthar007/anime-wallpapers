@@ -1,0 +1,72 @@
+name: superheroes_wallpapers
+version: 1.0.7+7
+publish_to: none
+description: A new Flutter project.
+environment: 
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies: 
+  cupertino_icons: ^1.0.2
+  get: 4.6.5
+  flutter: 
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  get_storage: ^2.0.3
+  logger: ^1.1.0
+  hexcolor: ^2.0.7
+  firebase_core: ^2.3.0
+  cloud_firestore: ^4.1.0
+  sizer: ^2.0.15  
+  cached_network_image: ^3.2.2
+  url_launcher: ^6.1.7
+  store_redirect: ^2.0.1
+  async_wallpaper: ^2.0.1
+  package_info_plus: ^1.0.2
+  device_info_plus: ^8.0.0
+  google_mobile_ads: ^2.3.0
+  in_app_review: ^2.0.6
+  in_app_update: ^4.0.1
+  wallpaper_manager_flutter: ^0.0.2
+  flutter_cache_manager: ^3.1.2
+  connectivity_plus: ^3.0.2
+  firebase_messaging: ^14.1.4
+  firebase_analytics: ^10.0.7
+  flutter_local_notifications: ^12.0.4
+  mailto: ^2.0.0-nullsafety.0
+
+
+dev_dependencies: 
+  flutter_lints: 2.0.1
+  flutter_launcher_icons_maker: "^0.10.1"
+  #flutter_launcher_name: "^0.0.1"
+
+  flutter_test:
+    sdk: flutter
+
+flutter_launcher_name:
+  name: "Superheroes Wallpapers"
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+
+flutter: 
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/images/
+  fonts:
+    - family: Teko
+      fonts:
+        - asset: assets/fonts/TekoBold.ttf
+          weight: 700
+        - asset: assets/fonts/TekoLight.ttf
+          weight: 300
+        - asset: assets/fonts/TekoMedium.ttf
+          weight: 500
+        - asset: assets/fonts/TekoRegular.ttf
+          weight: 400
+        - asset: assets/fonts/TekoSemiBold.ttf
+          weight: 600

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "452482022929",
+    "project_id": "superheroes-wallpapers-b46f4",
+    "storage_bucket": "superheroes-wallpapers-b46f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452482022929:android:078f96af7601d4688d7bb0",
+        "android_client_info": {
+          "package_name": "app.superheroes_wallpapers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452482022929-04j1ulmbo7gkie7gv2uenfn5s06kpmdf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB75OQv_rCXbPMs5wYiVtjKmIlrgbzHYr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452482022929-04j1ulmbo7gkie7gv2uenfn5s06kpmdf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
