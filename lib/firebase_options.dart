@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -53,10 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB75OQv_rCXbPMs5wYiVtjKmIlrgbzHYr0',
-    appId: '1:452482022929:android:078f96af7601d4688d7bb0',
-    messagingSenderId: '452482022929',
-    projectId: 'superheroes-wallpapers-b46f4',
-    storageBucket: 'superheroes-wallpapers-b46f4.appspot.com',
+    apiKey: 'AIzaSyC-OHwNkVXOfZKwL8HRsQZCnV0kLxcZuco',
+    appId: '1:519465591624:android:aeba870d54e94d2874497d',
+    messagingSenderId: '519465591624',
+    projectId: 'anime-wallpapers-62cf4',
+    storageBucket: 'anime-wallpapers-62cf4.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyADloyBfB24c8sNfIFRFfHD1zXNTcwUgqs',
+    appId: '1:519465591624:ios:6c309c6091f3652574497d',
+    messagingSenderId: '519465591624',
+    projectId: 'anime-wallpapers-62cf4',
+    storageBucket: 'anime-wallpapers-62cf4.appspot.com',
+    iosClientId: '519465591624-jjalsfmcj8ovgp4ugqopnb92jorpsqsv.apps.googleusercontent.com',
+    iosBundleId: 'app.marvelHeroesWallpapers',
   );
 }

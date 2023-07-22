@@ -4,7 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:superheroes_wallpapers/infrastructure/theme/colors.theme.dart';
+import 'package:anime_wallpapers/infrastructure/theme/colors.theme.dart';
 import 'base_controller.dart';
 import 'loading.dart';
 import 'page_state.dart';

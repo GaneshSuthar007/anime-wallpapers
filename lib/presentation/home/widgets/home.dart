@@ -1,12 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../generated/assets.dart';
 import '../../../infrastructure/base/network_image_loader.dart';
 import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/colors.theme.dart';
 import '../controllers/home.controller.dart';
 
 class Home extends GetView {
@@ -28,36 +30,75 @@ class Home extends GetView {
                       crossAxisSpacing: 1.sp,
                       childAspectRatio: (80.sp / 100.sp),
                     ),
-                    delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
                       return Stack(
                         children: [
                           Positioned.fill(
                             child: InkWell(
                               child: NetworkImageLoader(
-                                image: controller.featured.value![index]['src'],
+                                image: controller.featured.value![index].url!,
                               ),
                               onTap: () {
-                                DocumentSnapshot document = controller.featured.value![index];
                                 Get.toNamed(Routes.PREVIEW, arguments: {
-                                  "id": document.id,
+                                  "url": controller.featured.value![index].url!,
                                 });
                               },
                             ),
                           ),
-                          // Positioned(
-                          //   top: 15,
-                          //   right: 15,
-                          //   child: InkWell(
-                          //     onTap: () {
-                          //       DocumentSnapshot document = controller.featured.value![index];
-                          //       controller.makeFavourite(document.id);
-                          //     },
-                          //     child: Icon(
-                          //       CupertinoIcons.heart_circle,
-                          //       size: 25.sp,
-                          //     ),
-                          //   ),
-                          // )
+                          Positioned.fill(
+                            child: Visibility(
+                              visible:
+                                  !controller.isPremium(index),
+                              child: ClipRRect(
+                                // Clip it cleanly.
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 10,
+                                        right: 10,
+                                        child: SizedBox(
+                                          width: 40,
+                                          child: Image.asset(
+                                              Assets.imagesIconPremium),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        child: Center(
+                                          child: InkWell(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 30,
+                                                      vertical: 15),
+                                              decoration: BoxDecoration(
+                                                color: ColorsTheme.primary,
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(100)),
+                                              ),
+                                              child: Text("Unlock",
+                                                  style: TextStyle(
+                                                    color: ColorsTheme.white,
+                                                    fontSize: 20,
+                                                    height: 0.50,
+                                                  )),
+                                            ),
+                                            onTap: () {
+                                              controller.unlockWallpaper(index);
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
                         ],
                       );
                     }, childCount: controller.featured.value!.length)),

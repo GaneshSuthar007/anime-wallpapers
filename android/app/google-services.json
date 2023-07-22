@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "452482022929",
-    "project_id": "superheroes-wallpapers-b46f4",
-    "storage_bucket": "superheroes-wallpapers-b46f4.appspot.com"
+    "project_number": "519465591624",
+    "project_id": "anime-wallpapers-62cf4",
+    "storage_bucket": "anime-wallpapers-62cf4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:452482022929:android:078f96af7601d4688d7bb0",
+        "mobilesdk_app_id": "1:519465591624:android:aeba870d54e94d2874497d",
         "android_client_info": {
-          "package_name": "app.superheroes_wallpapers"
+          "package_name": "app.anime.wallpapers"
         }
       },
       "oauth_client": [
         {
-          "client_id": "452482022929-04j1ulmbo7gkie7gv2uenfn5s06kpmdf.apps.googleusercontent.com",
+          "client_id": "519465591624-89r4k6endhn4ndtsnmucimraas0vq761.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB75OQv_rCXbPMs5wYiVtjKmIlrgbzHYr0"
+          "current_key": "AIzaSyC-OHwNkVXOfZKwL8HRsQZCnV0kLxcZuco"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "452482022929-04j1ulmbo7gkie7gv2uenfn5s06kpmdf.apps.googleusercontent.com",
+              "client_id": "519465591624-89r4k6endhn4ndtsnmucimraas0vq761.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

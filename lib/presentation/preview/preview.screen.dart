@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../infrastructure/base/base_view.dart';
 import '../../infrastructure/base/network_image_loader.dart';
 import '../../infrastructure/theme/colors.theme.dart';
@@ -65,8 +63,8 @@ class PreviewScreen extends BaseView<PreviewController> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.sp),
                             child: Obx(() {
-                              return controller.wallpaper.value != null ? NetworkImageLoader(
-                                image: controller.wallpaper.value!['src'],
+                              return controller.url.value != null ? NetworkImageLoader(
+                                image: controller.url.value!,
                               ):Container();
                             }),
                           ),
@@ -109,8 +107,8 @@ class PreviewScreen extends BaseView<PreviewController> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15.sp),
                             child: Obx(() {
-                              return controller.wallpaper.value != null ? NetworkImageLoader(
-                                image: controller.wallpaper.value!['src'],
+                              return controller.url.value != null ? NetworkImageLoader(
+                                image: controller.url.value!,
                               ):Container();
                             }),
                           ),
@@ -205,7 +203,7 @@ class PreviewScreen extends BaseView<PreviewController> {
                 children: [
                   InkWell(
                     onTap: (){
-                      controller.applyLockScreen(controller.wallpaper.value!['src']);
+                      controller.applyLockScreen(controller.url.value!);
                     },
                     child: Container(
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(14.sp), color: ColorsTheme.primary),
@@ -216,7 +214,7 @@ class PreviewScreen extends BaseView<PreviewController> {
                   ),
                   InkWell(
                     onTap: () async {
-                      controller.applyHomeScreen(controller.wallpaper.value!['src']);
+                      controller.applyHomeScreen(controller.url.value!);
                     },
                     child: Container(
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(14.sp), color: ColorsTheme.primary),
@@ -233,8 +231,8 @@ class PreviewScreen extends BaseView<PreviewController> {
                   // ),
                   InkWell(
                     onTap: (){
-                      DocumentSnapshot document = controller.wallpaper.value!;
-                      controller.sendReport(document.id);
+                      // DocumentSnapshot document = controller.wallpaper.value!;
+                      // controller.sendReport(document.id);
                     },
                     child: Container(
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(14.sp), color: ColorsTheme.primary),

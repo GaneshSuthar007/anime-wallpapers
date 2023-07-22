@@ -2,11 +2,8 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-
-import '../../domain/firebase/firebase.repository.dart';
 import '../../infrastructure/base/page_state.dart';
 import 'app_lifecycle_reactor.dart';
 import 'app_open_manager.dart';
@@ -15,13 +12,15 @@ abstract class BaseController extends GetxController {
   final _pageSateController = PageState.DEFAULT.obs;
   late AppLifecycleReactor _appLifecycleReactor;
   late StreamSubscription<ConnectivityResult> subscription;
+
   PageState get pageState => _pageSateController.value;
   updatePageState(PageState state) => _pageSateController(state);
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
-    'Superheroes Wallpapers', // title
-    description: "Checkout our new Superheroes added.", // description
+    'Anime Wallpapers', // title
+    description: "Checkout our new Anime added.", // description
     importance: Importance.max,
   );
 
@@ -35,16 +34,14 @@ abstract class BaseController extends GetxController {
 
   @override
   void onInit() {
- /*   AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAd();
+    super.onInit();
+    AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAd();
     _appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-    _appLifecycleReactor.listenToAppStateChanges();*/
-
+    _appLifecycleReactor.listenToAppStateChanges();
     subscription =  Connectivity().onConnectivityChanged.listen((event) {
       onConnectionChange(event);
     });
     _initNotification();
-
-    super.onInit();
   }
 
 
@@ -54,9 +51,9 @@ abstract class BaseController extends GetxController {
 
   @override
   void onClose() {
+    super.onClose();
     _pageSateController.close();
     subscription.cancel();
-    super.onClose();
   }
 
   _initNotification() async {

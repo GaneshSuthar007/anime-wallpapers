@@ -1,4 +1,4 @@
-#superheroes_wallpapers
+#anime_wallpapers
 
 A new Flutter project.
 

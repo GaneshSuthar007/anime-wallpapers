@@ -1,4 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:anime_wallpapers/domain/core/constants/admob.constants.dart';
+import 'package:anime_wallpapers/infrastructure/dal/services/dto/categories.response.dart';
+import 'package:anime_wallpapers/infrastructure/dal/services/dto/wallpaper.response.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,28 +9,30 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:mailto/mailto.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:store_redirect/store_redirect.dart';
-import 'package:superheroes_wallpapers/domain/core/constants/admob.constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../domain/api/api.repository.dart';
 import '../../../domain/core/utils/snackbar.util.dart';
-import '../../../domain/firebase/firebase.repository.dart';
-import '../../../infrastructure/base/app_lifecycle_reactor.dart';
 import '../../../infrastructure/base/base_controller.dart';
 
 class HomeController extends BaseController {
-  final FirebaseRepository _firebaseRepository;
+  final APiRepository _apiRepository;
   var tabIndex = 0.obs;
   var reviewAvailable = false;
-  HomeController({required FirebaseRepository firebaseRepository}) : _firebaseRepository = firebaseRepository;
-  final heroes = Rxn<List<DocumentSnapshot>>([]);
-  final featured = Rxn<List<DocumentSnapshot>>([]);
-  List<String> labels = ["Super Heroes", "Heroes", "More"];
+
+  HomeController({required APiRepository apiRepository})
+      : _apiRepository = apiRepository;
+  final categories = Rxn<List<CategoriesResponseData>>([]);
+  final featured = Rxn<List<WallpaperResponseData>>([]);
+  final unlocked = Rxn<List<int>>([]);
+  List<String> labels = ["Anime Wallpapers", "Characters", "More"];
 
   var showAds = Rxn<bool>(false);
   var showRating = Rxn<bool>(true);
   late BannerAd banner;
   late BannerAdListener listener;
   final InAppReview inAppReview = InAppReview.instance;
+  late RewardedInterstitialAd? _rewardeInterstitialdAd;
 
   @override
   void onInit() async {
@@ -36,8 +40,13 @@ class HomeController extends BaseController {
     try {
       showLoading();
       reviewAvailable = await inAppReview.isAvailable();
-      heroes.value = await _firebaseRepository.getHeroes();
-      featured.value = await _firebaseRepository.getFeatured();
+      categories.value = await _apiRepository.getCategories();
+      featured.value = await _apiRepository.getWallpapers();
+      for (var i = 0; i < featured.value!.length; i++) {
+        if (!featured.value![i].isPremium!) {
+          unlocked.value = [...unlocked.value!, i];
+        }
+      }
       hideLoading();
     } catch (err) {
       hideLoading();
@@ -56,12 +65,12 @@ class HomeController extends BaseController {
     // if (await canLaunchUrl(url)) {
     //   await launchUrl(url);
     // }
-
     try {
       final mailtoLink = Mailto(
         to: ['starpremiumappz@gmail.com'],
         subject: 'App Feedback',
-        body: '\nDo Not Remove this \n App Version ${packageInfo.version} - ${packageInfo.buildNumber}',
+        body:
+            '\nDo Not Remove this \n App Version ${packageInfo.version} - ${packageInfo.buildNumber}',
       );
       await launchUrl(Uri.parse('$mailtoLink'));
     } on Exception {
@@ -71,19 +80,14 @@ class HomeController extends BaseController {
   }
 
   void about() async {
-    StoreRedirect.redirect(androidAppId: "app.superheroes_wallpapers");
+    StoreRedirect.redirect(androidAppId: "app.anime.wallpapers");
   }
 
   void share() async {}
 
-  void makeFavourite(String wallpaperId) async {
-    showLoading();
-    await _firebaseRepository.makeFavourite(wallpaperId);
-    hideLoading();
-  }
-
   void initAds() {
-    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
+    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
+        testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
     listener = BannerAdListener(
         onAdLoaded: (Ad ad) => showAds.value = true,
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
@@ -98,27 +102,60 @@ class HomeController extends BaseController {
       listener: listener,
     )..load();
   }
+
+  bool isPremium(int index) {
+    return unlocked.value!.contains(index);
+  }
+
+  void unlockWallpaper(index) async {
+    showLoading();
+    RewardedInterstitialAd.load(
+        adUnitId: AdmobConstants.rewarded,
+        request: const AdRequest(),
+        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            _rewardeInterstitialdAd = ad;
+            hideLoading();
+            _rewardeInterstitialdAd?.show(
+              onUserEarnedReward: (ad, reward) {
+                unlocked.value = [...unlocked.value!, index];
+                featured.value = [...featured.value!];
+              },
+            );
+          },
+          onAdFailedToLoad: (error) {
+            hideLoading();
+            print(error);
+            SnackbarUtil.showError(
+                message:
+                    "Oops. failed to unlock premium wallpaper. try again later.");
+          },
+        ));
+  }
+
   @override
   Future<void> onConnectionChange(ConnectivityResult result) async {
-      if(result == ConnectivityResult.wifi || result == ConnectivityResult.mobile){
-        try {
-          showLoading();
-          heroes.value = await _firebaseRepository.getHeroes();
-          featured.value = await _firebaseRepository.getFeatured();
-          hideLoading();
-        } catch (err) {
-          hideLoading();
-          SnackbarUtil.showError(message: err.toString());
-        }
-      }else if(result == ConnectivityResult.none){
-        SnackbarUtil.showError(message: "No Internet Connection. Please check your internet");
+    if (result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.mobile) {
+      try {
+        showLoading();
+        categories.value = await _apiRepository.getCategories();
+        featured.value = await _apiRepository.getWallpapers();
+        hideLoading();
+      } catch (err) {
+        hideLoading();
+        SnackbarUtil.showError(message: err.toString());
       }
+    } else if (result == ConnectivityResult.none) {
+      SnackbarUtil.showError(
+          message: "No Internet Connection. Please check your internet");
+    }
   }
 
   @override
   Future<void> onTokenChange(String? result) async {
-    if(result != null){
-      await _firebaseRepository.saveFCMToken(result);
+    if (result != null) {
+      await _apiRepository.addToken(result);
     }
   }
 }

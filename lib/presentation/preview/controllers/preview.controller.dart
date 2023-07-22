@@ -1,27 +1,27 @@
-import 'package:async_wallpaper/async_wallpaper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:mailto/mailto.dart';
+import 'package:anime_wallpapers/domain/api/api.repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../domain/core/constants/admob.constants.dart';
 import '../../../domain/core/utils/snackbar.util.dart';
-import '../../../domain/firebase/firebase.repository.dart';
 import '../../../infrastructure/base/base_controller.dart';
 
 class PreviewController extends BaseController {
-  final wallpaper = Rxn<DocumentSnapshot?>();
   final time = Rxn<String>("");
   final date = Rxn<String>("");
-  final FirebaseRepository _firebaseRepository;
+  final url = Rxn<String>("");
+  final APiRepository _apiRepository;
 
-  PreviewController({required FirebaseRepository firebaseRepository})
-      : _firebaseRepository = firebaseRepository;
+  PreviewController({required APiRepository apiRepository})
+      : _apiRepository = apiRepository;
 
   var showAds = Rxn<bool>(false);
   var showFullScreenAds = Rxn<bool>(false);
@@ -31,29 +31,20 @@ class PreviewController extends BaseController {
 
   @override
   void onInit() async {
+    super.onInit();
     initAds();
     DateTime now = DateTime.now();
     time.value = DateFormat('HH:mm').format(now);
     date.value = DateFormat('EEE d MMM').format(now);
-
-    var data = Get.arguments;
-    try {
-      showLoading();
-      wallpaper.value = await _firebaseRepository.getWallpaper(data['id']);
-      hideLoading();
-    } catch (err) {
-      hideLoading();
-      SnackbarUtil.showError(message: err.toString());
-    }
-    super.onInit();
+    url.value = Get.arguments['url'];
   }
 
   void applyHomeScreen(url) async {
     try {
-      showLoading();
-      var result = await AsyncWallpaper.setWallpaper(
-          url: url, wallpaperLocation: AsyncWallpaper.HOME_SCREEN);
-      hideLoading();
+      int location = WallpaperManager.HOME_SCREEN;
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+          await WallpaperManager.setWallpaperFromFile(file.path, location);
       if (result) {
         SnackbarUtil.showSuccess(
             title: "Wallpaper applied.", message: "it looks awesome :) ");
@@ -72,10 +63,10 @@ class PreviewController extends BaseController {
 
   void applyLockScreen(url) async {
     try {
-      showLoading();
-      var result = await AsyncWallpaper.setWallpaper(
-          url: url, wallpaperLocation: AsyncWallpaper.LOCK_SCREEN);
-      hideLoading();
+      int location = WallpaperManager.LOCK_SCREEN;
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+      await WallpaperManager.setWallpaperFromFile(file.path, location);
       if (result) {
         SnackbarUtil.showSuccess(
             title: "Wallpaper applied.", message: "it looks awesome :) ");
@@ -93,10 +84,6 @@ class PreviewController extends BaseController {
   }
 
   void sendReport(id) async {
-    // final Uri url = Uri(scheme: 'mailto', path: 'starpremiumappz@gmail.com', query: 'subject=Report Wallpaper &body=Wallpaper ID $id');
-    // if (await canLaunchUrl(url)) {
-    //   await launchUrl(url);
-    // }
     try {
       final mailtoLink = Mailto(
         to: ['starpremiumappz@gmail.com'],
@@ -111,7 +98,8 @@ class PreviewController extends BaseController {
   }
 
   void initAds() {
-    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
+    MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
+        testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
     listener = BannerAdListener(
         onAdLoaded: (Ad ad) => showAds.value = true,
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
@@ -127,7 +115,8 @@ class PreviewController extends BaseController {
           onAdLoaded: (InterstitialAd ad) {
             showFullScreenAds.value = true;
             interstitialAd = ad;
-            interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+            interstitialAd.fullScreenContentCallback =
+                FullScreenContentCallback(
               onAdDismissedFullScreenContent: (InterstitialAd ad) {
                 ad.dispose();
                 showFullScreenAds.value = false;
@@ -139,7 +128,6 @@ class PreviewController extends BaseController {
           },
         ));
 
-
     banner = BannerAd(
       adUnitId: AdmobConstants.bannerAd,
       size: AdSize.banner,
@@ -149,28 +137,12 @@ class PreviewController extends BaseController {
   }
 
   @override
-  Future<void> onConnectionChange(ConnectivityResult result) async {
-    if (result == ConnectivityResult.wifi ||
-        result == ConnectivityResult.mobile) {
-      var data = Get.arguments;
-      try {
-        showLoading();
-        wallpaper.value = await _firebaseRepository.getWallpaper(data['id']);
-        hideLoading();
-      } catch (err) {
-        hideLoading();
-        SnackbarUtil.showError(message: err.toString());
-      }
-    } else if (result == ConnectivityResult.none) {
-      SnackbarUtil.showError(
-          message: "No Internet Connection. Please check your internet");
-    }
-  }
+  Future<void> onConnectionChange(ConnectivityResult result) async {}
 
   @override
   Future<void> onTokenChange(String? result) async {
     if (result != null) {
-      await _firebaseRepository.saveFCMToken(result);
+      await _apiRepository.addToken(result);
     }
   }
 }

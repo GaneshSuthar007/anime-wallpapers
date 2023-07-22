@@ -1,17 +1,13 @@
-import 'dart:ui';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../infrastructure/base/network_image_loader.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/colors.theme.dart';
 import '../controllers/home.controller.dart';
 
-class Heroes extends GetView {
-  const Heroes({super.key});
+class Categories extends GetView {
+  const Categories({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +31,13 @@ class Heroes extends GetView {
                           fit: StackFit.expand,
                           children: [
                             NetworkImageLoader(
-                              image: controller.heroes.value![index]['bg'],
+                              image: controller.categories.value![index].url!,
                             ),
-
                             Positioned(
                               bottom: 20,
                               left: 20,
                               right: 20,
-                              child: Text(controller.heroes.value![index]['name'],
+                              child: Text(controller.categories.value![index].name!,
                                   style: TextStyle(
                                     color: ColorsTheme.background,
                                     fontSize: 30,
@@ -52,14 +47,13 @@ class Heroes extends GetView {
                           ],
                         ),
                         onTap: () {
-                          DocumentSnapshot document = controller.heroes.value![index];
                           Get.toNamed(Routes.WALLPAPERS, arguments: {
-                            "title": document.get("name"),
-                            "id": document.id,
+                            "title": controller.categories.value![index].name,
+                            "id": controller.categories.value![index].id,
                           });
                         },
                       );
-                    }, childCount: controller.heroes.value!.length)),
+                    }, childCount: controller.categories.value!.length)),
               ))
         ],
       );

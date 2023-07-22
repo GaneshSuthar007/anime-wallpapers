@@ -11,7 +11,10 @@ class SplashScreen extends BaseView<SplashController> {
     return SafeArea(
       top: false,
       child: Center(
-        child: Padding(padding: const EdgeInsets.all(60), child: FadeTransition(opacity: controller.animation, child: Image.asset(Assets.imagesIcLogo))),
+        child: Padding(padding: const EdgeInsets.all(120), child: FadeTransition(opacity: controller.animation, child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(100)),
+          child: Image.asset(Assets.imagesAppIcon),
+        ))),
       ),
     );
   }

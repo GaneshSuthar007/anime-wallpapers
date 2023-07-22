@@ -10,19 +10,19 @@ class ConfigEnvironments {
   static const List<Map<String, String>> _availableEnvironments = [
     {
       'env': Environments.local,
-      'url': '',
+      'url': 'https://magenta-rose-cod-gear.cyclic.app/v1/api/',
     },
     {
       'env': Environments.develop,
-      'url': '',
+      'url': 'https://magenta-rose-cod-gear.cyclic.app/v1/api/',
     },
     {
       'env': Environments.homolog,
-      'url': '',
+      'url': 'https://magenta-rose-cod-gear.cyclic.app/v1/api/',
     },
     {
       'env': Environments.production,
-      'url': '',
+      'url': 'https://magenta-rose-cod-gear.cyclic.app/v1/api/',
     },
   ];
 

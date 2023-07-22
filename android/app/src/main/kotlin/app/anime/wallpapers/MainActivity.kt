@@ -1,4 +1,4 @@
-package app.superheroes_wallpapers
+package app.anime.wallpapers
 
 import io.flutter.embedding.android.FlutterActivity
 

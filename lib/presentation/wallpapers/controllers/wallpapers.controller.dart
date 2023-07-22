@@ -1,23 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:anime_wallpapers/domain/api/api.repository.dart';
+import 'package:anime_wallpapers/infrastructure/dal/services/dto/wallpaper.response.dart';
 
 import '../../../domain/core/constants/admob.constants.dart';
 import '../../../domain/core/utils/snackbar.util.dart';
-import '../../../domain/firebase/firebase.repository.dart';
 import '../../../infrastructure/base/base_controller.dart';
 
 class WallpapersController extends BaseController {
   var title = "".obs;
-  var id = "".obs;
+  var id = 0.obs;
 
-  final featured = Rxn<List<DocumentSnapshot>>([]);
-
-  final FirebaseRepository _firebaseRepository;
-
-  WallpapersController({required FirebaseRepository firebaseRepository}) : _firebaseRepository = firebaseRepository;
+  final featured = Rxn<List<WallpaperResponseData>>([]);
+  late RewardedInterstitialAd? _rewardeInterstitialdAd;
+  final APiRepository _apiRepository;
+  final unlocked = Rxn<List<int>>([]);
+  WallpapersController({required APiRepository apiRepository}) : _apiRepository = apiRepository;
 
   var showAds = Rxn<bool>(false);
   late BannerAd banner;
@@ -31,7 +31,12 @@ class WallpapersController extends BaseController {
     id.value = data['id'];
     try {
       showLoading();
-      featured.value = await _firebaseRepository.getWallpaperByHero(id.value);
+      featured.value = await _apiRepository.getWallpapers(id.value);
+      for (var i = 0; i < featured.value!.length; i++) {
+        if (!featured.value![i].isPremium!) {
+          unlocked.value = [...unlocked.value!, i];
+        }
+      }
       hideLoading();
     } catch (err) {
       hideLoading();
@@ -63,7 +68,7 @@ class WallpapersController extends BaseController {
     if (result == ConnectivityResult.wifi || result == ConnectivityResult.mobile) {
       try {
         showLoading();
-        featured.value = await _firebaseRepository.getWallpaperByHero(id.value);
+        featured.value = await _apiRepository.getWallpapers(id.value);
         hideLoading();
       } catch (err) {
         hideLoading();
@@ -74,10 +79,39 @@ class WallpapersController extends BaseController {
     }
   }
 
+  bool isPremium(int index) {
+    return unlocked.value!.contains(index);
+  }
+
+  void unlockWallpaper(index) async {
+    showLoading();
+    RewardedInterstitialAd.load(
+        adUnitId: AdmobConstants.rewarded,
+        request: const AdRequest(),
+        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            _rewardeInterstitialdAd = ad;
+            hideLoading();
+            _rewardeInterstitialdAd?.show(
+              onUserEarnedReward: (ad, reward) {
+                unlocked.value = [...unlocked.value!, index];
+                featured.value = [...featured.value!];
+              },
+            );
+          },
+          onAdFailedToLoad: (error) {
+            hideLoading();
+            SnackbarUtil.showError(
+                message:
+                "Oops. failed to unlock premium wallpaper. try again later.");
+          },
+        ));
+  }
+
   @override
   Future<void> onTokenChange(String? result) async {
     if(result != null){
-      await _firebaseRepository.saveFCMToken(result);
+      await _apiRepository.addToken(result);
     }
   }
 }

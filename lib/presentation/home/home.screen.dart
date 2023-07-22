@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/cupertino.dart';
-import 'widgets/heroes.dart';
+import 'widgets/categories.dart';
 import './widgets/home.dart';
 
 import '../../infrastructure/base/base_view.dart';
 import './controllers/home.controller.dart';
 import '../../infrastructure/theme/colors.theme.dart';
 import 'widgets/more.dart';
-import 'widgets/favourite.dart';
 
 // ignore: use_key_in_widget_constructors
 class HomeScreen extends BaseView<HomeController> {
@@ -35,7 +34,7 @@ class HomeScreen extends BaseView<HomeController> {
           Expanded(
               child: Obx(() => IndexedStack(
                     index: controller.tabIndex.value,
-                    children: const [Home(), Heroes(), More()],
+                    children: const [Home(), Categories(), More()],
                   ))),
           Obx(() => controller.showAds.value!
               ? Container(

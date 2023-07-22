@@ -4,7 +4,7 @@ class DefaultException implements Exception {
   final String message;
   final StackTrace? stackTrace;
   DefaultException({
-    this.message = 'Erro ao carregar dados, verifique sua internet!',
+    this.message = 'No internet connection.',
     this.stackTrace,
   }) {
     Logger().e(stackTrace);

@@ -7,9 +7,8 @@ class Assets {
   static const String fontsTekoMedium = 'assets/fonts/TekoMedium.ttf';
   static const String fontsTekoRegular = 'assets/fonts/TekoRegular.ttf';
   static const String fontsTekoSemiBold = 'assets/fonts/TekoSemiBold.ttf';
-  static const String imagesAppIcon = 'assets/images/app_icon.png';
+  static const String imagesAppIcon = 'assets/images/app_icon.jpg';
   static const String imagesIcLogo = 'assets/images/ic_logo.jpg';
-  static const String imagesIronMan = 'assets/images/iron-man.png';
-  static const String imagesThor = 'assets/images/thor.png';
+  static const String imagesIconPremium = 'assets/images/icon_premium.png';
 
 }
