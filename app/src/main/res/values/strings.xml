@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Anime Wallpapers</string>
+    <string name="title_home">Home</string>
+    <string name="title_categories">Categories</string>
+    <string name="title_settings">Settings</string>
+    <string name="close">Close</string>
+    <string name="common_server_error">We\'re facing some server issue that time please try again.</string>
+    <string name="updating_error">Error while updating the app. please try again after some time.</string>
+    <string name="updating_app">We\'are updating our application please wait for some time.</string>
+    <string name="fcm_connection_message_error">Error while fetching config from firebase.</string>
+    <string name="fcm_connection_message_success">Config fetched successfully.</string>
+    <string name="server_error">Failed to connect with server. please try again</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="preview">Preview</string>
+    <string name="_10_00_am">10:00 AM</string>
+    <string name="how_to_set_wallpaper">How To set Wallpaper.?</string>
+    <string name="tell_a_friend">Tell a Friend</string>
+    <string name="feedback">Feedback</string>
+    <string name="disclaimer">Disclaimer</string>
+    <string name="about_us">About Us</string>
+    <string name="tap_to_unlock">Tap To Unlock</string>
+
+</resources>
