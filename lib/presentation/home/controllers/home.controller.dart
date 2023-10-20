@@ -87,7 +87,7 @@ class HomeController extends BaseController {
 
   void initAds() {
     MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
-        testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
+        testDeviceIds: ['4B2C5CE05599DDA161AE9A55E73554F0']));
     listener = BannerAdListener(
         onAdLoaded: (Ad ad) => showAds.value = true,
         onAdFailedToLoad: (Ad ad, LoadAdError error) {

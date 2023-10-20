@@ -1,14 +1,14 @@
+import 'package:anime_wallpapers/domain/api/api.repository.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:mailto/mailto.dart';
-import 'package:anime_wallpapers/domain/api/api.repository.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
 
 import '../../../domain/core/constants/admob.constants.dart';
 import '../../../domain/core/utils/snackbar.util.dart';
@@ -29,6 +29,8 @@ class PreviewController extends BaseController {
   late BannerAdListener listener;
   late InterstitialAd interstitialAd;
 
+  static const _channel = MethodChannel('wallpaper');
+
   @override
   void onInit() async {
     super.onInit();
@@ -41,10 +43,8 @@ class PreviewController extends BaseController {
 
   void applyHomeScreen(url) async {
     try {
-      int location = WallpaperManager.HOME_SCREEN;
       var file = await DefaultCacheManager().getSingleFile(url);
-      final bool result =
-          await WallpaperManager.setWallpaperFromFile(file.path, location);
+      final bool result = await setWallpaperFromFile(file.path, 1);
       if (result) {
         SnackbarUtil.showSuccess(
             title: "Wallpaper applied.", message: "it looks awesome :) ");
@@ -63,16 +63,19 @@ class PreviewController extends BaseController {
 
   void applyLockScreen(url) async {
     try {
-      int location = WallpaperManager.LOCK_SCREEN;
       var file = await DefaultCacheManager().getSingleFile(url);
-      final bool result =
-      await WallpaperManager.setWallpaperFromFile(file.path, location);
+
+      WallpaperManagerFlutter().setwallpaperfromFile(file, WallpaperManagerFlutter.LOCK_SCREEN);
+
+
+      final bool result = await setWallpaperFromFile(file.path, 2);
+      debugPrint(result.toString());
       if (result) {
-        SnackbarUtil.showSuccess(
-            title: "Wallpaper applied.", message: "it looks awesome :) ");
-        if (showFullScreenAds.value!) {
-          interstitialAd.show();
-        }
+        // SnackbarUtil.showSuccess(
+        //     title: "Wallpaper applied.", message: "it looks awesome :) ");
+        // if (showFullScreenAds.value!) {
+        //   interstitialAd.show();
+        // }
       } else {
         SnackbarUtil.showError(
             message: "Oops. something went wrong. try again later.");
@@ -99,7 +102,7 @@ class PreviewController extends BaseController {
 
   void initAds() {
     MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
-        testDeviceIds: ['9078A869DA39F95D4CEF14A600401F01']));
+        testDeviceIds: ['4B2C5CE05599DDA161AE9A55E73554F0']));
     listener = BannerAdListener(
         onAdLoaded: (Ad ad) => showAds.value = true,
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
@@ -144,5 +147,11 @@ class PreviewController extends BaseController {
     if (result != null) {
       await _apiRepository.addToken(result);
     }
+  }
+
+  static Future<bool> setWallpaperFromFile(
+      String filePath, int wallpaperLocation) async {
+    return await _channel.invokeMethod('setWallpaperFromFile',
+        {'filePath': filePath, 'wallpaperLocation': wallpaperLocation});
   }
 }

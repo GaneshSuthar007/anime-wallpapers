@@ -70,7 +70,6 @@ abstract class BaseController extends GetxController {
       onTokenChange(token);
     });
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message)
     {
@@ -91,6 +90,9 @@ abstract class BaseController extends GetxController {
             ));
       }
     });
+
+    //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   }
 
   Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

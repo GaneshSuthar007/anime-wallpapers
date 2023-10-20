@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.anime.wallpapers">
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
    <application
         android:label="Anime Wallpapers"
         android:name="${applicationName}"
