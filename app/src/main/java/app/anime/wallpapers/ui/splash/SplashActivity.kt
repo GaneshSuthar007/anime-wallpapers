@@ -39,43 +39,41 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         appUpdateManager = AppUpdateManagerFactory.create(this)
-    }
-
-    override fun onResume() {
-        super.onResume()
         initInAppUpdater()
     }
-
     private fun initInAppUpdater() {
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        val callback =  registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == inAppUpdateCode) {
+                when (result.resultCode) {
+                    RESULT_CANCELED -> {
+                        showInfoDialog(
+                            R.drawable.ic_app_updating,
+                            R.string.updating_error
+                        ) {
+                            finish()
+                        }
+                    }
+
+                    ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                        showInfoDialog(
+                            R.drawable.ic_app_updating,
+                            R.string.updating_error
+                        ) {
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
+
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             when {
                 appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE -> {
                     appUpdateManager.startUpdateFlowForResult(
                         appUpdateInfo,
-                        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                            if (result.resultCode == inAppUpdateCode) {
-                                when (result.resultCode) {
-                                    RESULT_CANCELED -> {
-                                        showInfoDialog(
-                                            R.drawable.ic_app_updating,
-                                            R.string.updating_error
-                                        ) {
-                                            finish()
-                                        }
-                                    }
-
-                                    ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
-                                        showInfoDialog(
-                                            R.drawable.ic_app_updating,
-                                            R.string.updating_error
-                                        ) {
-                                            finish()
-                                        }
-                                    }
-                                }
-                            }
-                        },
+                        callback,
                         AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
                     )
                 }
